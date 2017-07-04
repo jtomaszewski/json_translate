@@ -1,20 +1,8 @@
 module JSONTranslate
   module Translates
     module InstanceMethods
-      def disable_fallback
-        toggle_fallback(false)
-      end
-
-      def enable_fallback
-        toggle_fallback(true)
-      end
-
-      protected
-
-      attr_reader :enabled_fallback
-
       def json_translate_fallback_locales(locale)
-        return locale if enabled_fallback == false || !I18n.respond_to?(:fallbacks)
+        return locale if !I18n.respond_to?(:fallbacks)
         I18n.fallbacks[locale]
       end
 
@@ -78,20 +66,6 @@ module JSONTranslate
         assigning = assignment.present?
 
         [translated_attr_name, locale, assigning]
-      end
-
-      def toggle_fallback(enabled)
-        if block_given?
-          old_value = @enabled_fallback
-          begin
-            @enabled_fallback = enabled
-            yield
-          ensure
-            @enabled_fallback = old_value
-          end
-        else
-          @enabled_fallback = enabled
-        end
       end
     end
   end

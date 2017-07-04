@@ -105,35 +105,4 @@ If you've enabled fallbacks for missing translations, you probably want to disab
 them in the admin interface to display which translations the user still has to
 fill in.
 
-From:
-
-```ruby
-I18n.locale = :en
-post.title # => This database rocks!
-post.title_nl # => This database rocks!
-```
-
-To:
-
-```ruby
-I18n.locale = :en
-post.title # => This database rocks!
-post.disable_fallback
-post.title_nl # => nil
-```
-
-You can also call your code into a block that temporarily disable or enable fallbacks.
-
-```ruby
-I18n.locale = :en
-post.title_nl # => This database rocks!
-
-post.disable_fallback do
-  post.title_nl # => nil
-end
-
-post.disable_fallback
-post.enable_fallback do
-  post.title_nl # => This database rocks!
-end
-```
+To do this, you can replace `#json_translation_fallbacks` method in the given class and disable them permanently or temporarily with your own implementation.

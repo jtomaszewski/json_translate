@@ -97,9 +97,9 @@ class TranslatesTest < JSONTranslate::Test
     end
   end
 
-  def test_class_method_translates?
-    assert_equal true, Post.translates?
-    assert_equal true, PostDetailed.translates?
+  def test_class_method_json_translates?
+    assert_equal true, Post.json_translates?
+    assert_equal true, PostDetailed.json_translates?
   end
 
   def test_translate_post_detailed

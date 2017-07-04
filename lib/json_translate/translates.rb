@@ -2,7 +2,7 @@ module JSONTranslate
   module Translates
     SUFFIX = "_translations".freeze
 
-    def translates(*attrs)
+    def json_translates(*attrs)
       include InstanceMethods
 
       class_attribute :translated_attribute_names
@@ -28,7 +28,7 @@ module JSONTranslate
       send(:prepend, ActiveRecordWithJSONTranslate)
     end
 
-    def translates?
+    def json_translates?
       included_modules.include?(InstanceMethods)
     end
   end

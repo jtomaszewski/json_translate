@@ -36,7 +36,7 @@ Model translations allow you to translate your models' attribute values. E.g.
 
 ```ruby
 class Post < ActiveRecord::Base
-  translates :title, :body
+  json_translates :title, :body
 end
 ```
 

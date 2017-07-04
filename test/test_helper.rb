@@ -7,11 +7,11 @@ DatabaseCleaner.strategy = :transaction
 I18n.available_locales = [:en, :fr]
 
 class Post < ActiveRecord::Base
-  translates :title
+  json_translates :title
 end
 
 class PostDetailed < Post
-  translates :comment
+  json_translates :comment
 end
 
 class JSONTranslate::Test < Minitest::Test

@@ -10,7 +10,7 @@ module JSONTranslate
         translations = public_send("#{attr_name}#{SUFFIX}") || {}
 
         available = Array(json_translate_fallback_locales(locale)).detect do |available_locale|
-          translations[available_locale.to_s].present?
+          !translations[available_locale.to_s].nil?
         end
 
         translations[available.to_s]
@@ -20,7 +20,11 @@ module JSONTranslate
         translation_store = "#{attr_name}#{SUFFIX}"
         translations = public_send(translation_store) || {}
         public_send("#{translation_store}_will_change!") unless translations[locale.to_s] == value
-        translations[locale.to_s] = value
+        if value.nil?
+          translations.delete(locale.to_s)
+        else
+          translations[locale.to_s] = value
+        end
         public_send("#{translation_store}=", translations)
         value
       end

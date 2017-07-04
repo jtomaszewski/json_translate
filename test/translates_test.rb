@@ -64,7 +64,7 @@ class TranslatesTest < JSONTranslate::Test
     I18n::Backend::Simple.include(I18n::Backend::Fallbacks)
     I18n.default_locale = :"en-US"
 
-    p = Post.new(:title_translations => { "en" => "English Title", "fr" => "" })
+    p = Post.new(:title_translations => { "en" => "English Title" })
     I18n.with_locale(:fr) do
       assert_equal("English Title", p.title_fr)
     end

@@ -1,7 +1,7 @@
 module JSONTranslate
   module Translates
     module InstanceMethods
-      def json_translate_fallback_locales(locale)
+      def json_translate_fallback_locales(locale, attr_name)
         return locale if !I18n.respond_to?(:fallbacks)
         I18n.fallbacks[locale]
       end
@@ -9,7 +9,7 @@ module JSONTranslate
       def read_json_translation(attr_name, locale = I18n.locale)
         translations = public_send("#{attr_name}#{SUFFIX}") || {}
 
-        available = Array(json_translate_fallback_locales(locale)).detect do |available_locale|
+        available = Array(json_translate_fallback_locales(locale, attr_name)).detect do |available_locale|
           !translations[available_locale.to_s].nil?
         end
 

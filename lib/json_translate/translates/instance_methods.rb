@@ -1,19 +1,51 @@
 module JSONTranslate
   module Translates
     module InstanceMethods
+      def available_locales
+        translated_attribute_names.map do |attr_name|
+          hash = public_send("#{attr_name}#{SUFFIX}")
+          hash ? hash.keys : []
+        end.flatten.uniq
+      end
+
+      def translations
+        available_locales.map do |locale|
+          data = translated_attribute_names.map do |attr_name|
+            [attr_name, read_json_translation(attr_name, locale, false)]
+          end.to_h
+          { locale: locale }.merge(data)
+        end
+      end
+
+      def translations_attributes=(translations_attributes)
+        translations_attributes.each do |translation_attributes|
+          locale = translation_attributes[:locale] || translation_attributes["locale"]
+          next unless locale.present?
+
+          translation_attributes.each do |attr_name, value|
+            next if attr_name == :locale || attr_name == "locale"
+            write_json_translation(attr_name, value, locale)
+          end
+        end
+      end
+
       def json_translate_fallback_locales(locale, attr_name)
         return locale if !I18n.respond_to?(:fallbacks)
         I18n.fallbacks[locale]
       end
 
-      def read_json_translation(attr_name, locale = I18n.locale)
+      def read_json_translation(attr_name, locale = I18n.locale, with_fallbacks = true)
         translations = public_send("#{attr_name}#{SUFFIX}") || {}
 
-        available = Array(json_translate_fallback_locales(locale, attr_name)).detect do |available_locale|
-          !translations[available_locale.to_s].nil?
+        if with_fallbacks
+          fallbacks = Array(json_translate_fallback_locales(locale, attr_name))
+          available_locale = fallbacks.detect do |available_locale|
+            !translations[available_locale.to_s].nil?
+          end
+          translations[available_locale.to_s]
+        else
+          translations[locale.to_s]
         end
-
-        translations[available.to_s]
       end
 
       def write_json_translation(attr_name, value, locale = I18n.locale)

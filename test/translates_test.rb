@@ -119,4 +119,69 @@ class TranslatesTest < JSONTranslate::Test
     I18n.with_locale(:fr) { assert_equal "Un livre unique", p.comment }
     I18n.with_locale(:fr) { assert_equal "Alice au pays des merveilles", p.title }
   end
+
+  def test_available_locales_method
+    p = PostDetailed.create!(
+      :title_translations => {
+        "en" => "Alice in Wonderland",
+        "fr" => "Alice au pays des merveilles"
+      },
+      :comment_translations => {
+        "en" => "Awesome book",
+        "pl" => "Piękna książka"
+      }
+    )
+    assert_equal ["en", "fr", "pl"], p.available_locales
+  end
+
+  def test_translations_method
+    p = PostDetailed.create!(
+      :title_translations => {
+        "en" => "Alice in Wonderland",
+        "fr" => "Alice au pays des merveilles"
+      },
+      :comment_translations => {
+        "en" => "Awesome book",
+        "pl" => "Piękna książka"
+      }
+    )
+    assert_equal [
+      {
+        :locale => "en",
+        :title => "Alice in Wonderland",
+        :comment => "Awesome book"
+      },
+      {
+        :locale => "fr",
+        :title => "Alice au pays des merveilles",
+        :comment => nil
+      },
+      {
+        :locale => "pl",
+        :title => nil,
+        :comment => "Piękna książka"
+      }
+    ], p.translations
+  end
+
+  def test_translations_attributes_assign_method
+    p = PostDetailed.create!(
+      :translations_attributes => [
+        {
+          :locale => "en",
+          :title => "Alice in Wonderland",
+          :comment => "Awesome book"
+        },
+        {
+          :locale => "fr",
+          :title => "Alice au pays des merveilles",
+          :comment => "Un livre unique"
+        }
+      ]
+    )
+    I18n.with_locale(:en) { assert_equal "Awesome book", p.comment }
+    I18n.with_locale(:en) { assert_equal "Alice in Wonderland", p.title }
+    I18n.with_locale(:fr) { assert_equal "Un livre unique", p.comment }
+    I18n.with_locale(:fr) { assert_equal "Alice au pays des merveilles", p.title }
+  end
 end

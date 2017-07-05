@@ -5,9 +5,8 @@ module JSONTranslate
     def json_translates(*attrs)
       include InstanceMethods
 
-      class_attribute :translated_attribute_names
-
-      self.translated_attribute_names = attrs
+      class_attribute :translated_attribute_names if !respond_to?(:translated_attribute_names)
+      self.translated_attribute_names = (self.translated_attribute_names || []) + attrs
 
       attrs.each do |attr_name|
         define_method attr_name do

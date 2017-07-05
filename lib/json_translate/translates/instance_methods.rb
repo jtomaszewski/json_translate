@@ -13,8 +13,12 @@ module JSONTranslate
           data = translated_attribute_names.map do |attr_name|
             [attr_name, read_json_translation(attr_name, locale, false)]
           end.to_h
-          OpenStruct.new({ locale: locale }.merge(data))
+          build_translation({ locale: locale }.merge(data))
         end
+      end
+
+      def build_translation(data = {})
+        OpenStruct.new(data)
       end
 
       def translations_attributes=(translations_attributes)

@@ -2,18 +2,18 @@ module JSONTranslate
   module Translates
     module InstanceMethods
       def available_locales
-        translated_attribute_names.map do |attr_name|
+        @available_locales ||= translated_attribute_names.map do |attr_name|
           hash = public_send("#{attr_name}#{SUFFIX}")
           hash ? hash.keys : []
         end.flatten.uniq
       end
 
       def translations
-        available_locales.map do |locale|
+        @translations ||= available_locales.map do |locale|
           data = translated_attribute_names.map do |attr_name|
             [attr_name, read_json_translation(attr_name, locale, false)]
           end.to_h
-          { locale: locale }.merge(data)
+          OpenStruct.new({ locale: locale }.merge(data))
         end
       end
 
@@ -63,6 +63,7 @@ module JSONTranslate
 
         translation_store = "#{attr_name}#{SUFFIX}"
         translations = public_send(translation_store) || {}
+        
         public_send("#{translation_store}_will_change!") unless translations[locale] == value
         if value.nil?
           translations.delete(locale)
@@ -70,6 +71,10 @@ module JSONTranslate
           translations[locale] = value
         end
         public_send("#{translation_store}=", translations)
+
+        @available_locale = nil
+        @translations = nil
+
         value
       end
 

@@ -185,6 +185,35 @@ class TranslatesTest < JSONTranslate::Test
     I18n.with_locale(:fr) { assert_equal "Alice au pays des merveilles", p.title }
   end
 
+  def test_translations_attributes_assign_method_destroy_parameter
+    p = PostDetailed.create!(
+      :translations_attributes => [
+        {
+          :locale => "en",
+          :title => "Alice in Wonderland",
+          :comment => "Awesome book"
+        },
+        {
+          :locale => "fr",
+          :title => "Alice au pays des merveilles",
+          :comment => "Un livre unique"
+        }
+      ]
+    )
+    p.update!(
+      :translations_attributes => [
+        {
+          :locale => "fr",
+          :_destroy => true
+        }
+      ]
+    )
+    I18n.with_locale(:en) { assert_equal "Awesome book", p.comment }
+    I18n.with_locale(:en) { assert_equal "Alice in Wonderland", p.title }
+    I18n.with_locale(:fr) { assert_equal "Awesome book", p.comment }
+    I18n.with_locale(:fr) { assert_equal "Alice in Wonderland", p.title }
+  end
+
   def test_translation_locale_validation
     assert_raises(JSONTranslate::InvalidTranslationLocale) { 
       p = PostDetailed.create!(title_ru: "Alice in Wonderland") 

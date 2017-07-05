@@ -22,9 +22,16 @@ module JSONTranslate
           locale = translation_attributes[:locale] || translation_attributes["locale"]
           next unless locale.present?
 
-          translation_attributes.each do |attr_name, value|
-            next if attr_name == :locale || attr_name == "locale"
-            write_json_translation(attr_name, value, locale)
+          destroy = translation_attributes[:_destroy] || translation_attributes["_destroy"]
+          if [1, true, "true", "on"].include?(destroy)
+            translated_attribute_names.map do |attr_name|
+              write_json_translation(attr_name, nil, locale)
+            end
+          else
+            translation_attributes.each do |attr_name, value|
+              next if [:locale, "locale", :_destroy, "_destroy"].include?(attr_name)
+              write_json_translation(attr_name, value, locale)
+            end
           end
         end
       end

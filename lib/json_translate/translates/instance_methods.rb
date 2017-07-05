@@ -13,7 +13,7 @@ module JSONTranslate
           data = translated_attribute_names.map do |attr_name|
             [attr_name, read_json_translation(attr_name, locale, false)]
           end.to_h
-          build_translation({ locale: locale }.merge(data))
+          OpenStruct.new({ id: locale, locale: locale }.merge(data))
         end
       end
 
@@ -22,6 +22,7 @@ module JSONTranslate
       end
 
       def translations_attributes=(translations_attributes)
+        translations_attributes = translations_attributes.values if translations_attributes.is_a?(Hash) 
         translations_attributes.each do |translation_attributes|
           locale = translation_attributes[:locale] || translation_attributes["locale"]
           next unless locale.present?
@@ -51,7 +52,7 @@ module JSONTranslate
         if with_fallbacks
           fallbacks = Array(json_translate_fallback_locales(locale, attr_name))
           available_locale = fallbacks.detect do |available_locale|
-            !translations[available_locale.to_s].nil?
+            translations[available_locale.to_s].present?
           end
           translations[available_locale.to_s]
         else
@@ -69,10 +70,10 @@ module JSONTranslate
         translations = public_send(translation_store) || {}
 
         public_send("#{translation_store}_will_change!") unless translations[locale] == value
-        if value.nil?
-          translations.delete(locale)
-        else
+        if value.present?
           translations[locale] = value
+        else
+          translations.delete(locale)
         end
         public_send("#{translation_store}=", translations)
 

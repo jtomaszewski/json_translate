@@ -63,7 +63,7 @@ module JSONTranslate
 
         translation_store = "#{attr_name}#{SUFFIX}"
         translations = public_send(translation_store) || {}
-        
+
         public_send("#{translation_store}_will_change!") unless translations[locale] == value
         if value.nil?
           translations.delete(locale)

@@ -146,23 +146,22 @@ class TranslatesTest < JSONTranslate::Test
       }
     )
     assert_equal [
-      OpenStruct.new({
+      {
         :locale => "en",
         :title => "Alice in Wonderland",
         :comment => "Awesome book"
-      }),
-      OpenStruct.new({
+      },
+      {
         :locale => "fr",
         :title => "Alice au pays des merveilles",
         :comment => nil
-      }),
-      OpenStruct.new({
+      },
+      {
         :locale => "pl",
         :title => nil,
         :comment => "Piękna książka"
-      }),
-    ], p.translations
-    assert_equal p.translations[0].locale, "en"
+      },
+    ], p.translations.map(&:to_h)
   end
 
   def test_translations_attributes_assign_method

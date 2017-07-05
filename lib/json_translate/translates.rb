@@ -5,6 +5,9 @@ module JSONTranslate
     def json_translates(*attrs)
       include InstanceMethods
 
+      class_attribute :translation_locales if !respond_to?(:translation_locales)
+      self.translation_locales = I18n.available_locales.map(&:to_s)
+
       class_attribute :translated_attribute_names if !respond_to?(:translated_attribute_names)
       self.translated_attribute_names = (self.translated_attribute_names || []) + attrs
 

@@ -4,7 +4,7 @@ require 'json_translate'
 require 'database_cleaner'
 DatabaseCleaner.strategy = :transaction
 
-I18n.available_locales = [:en, :fr]
+I18n.available_locales = [:en, :fr, :pl]
 
 class Post < ActiveRecord::Base
   json_translates :title

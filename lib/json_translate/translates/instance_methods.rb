@@ -49,13 +49,18 @@ module JSONTranslate
       end
 
       def write_json_translation(attr_name, value, locale = I18n.locale)
+        locale = locale.to_s
+        if !translation_locales.include?(locale)
+          raise InvalidTranslationLocale.new("Unknown locale #{locale}. Maybe you should replace `.translation_locales` method")
+        end
+
         translation_store = "#{attr_name}#{SUFFIX}"
         translations = public_send(translation_store) || {}
-        public_send("#{translation_store}_will_change!") unless translations[locale.to_s] == value
+        public_send("#{translation_store}_will_change!") unless translations[locale] == value
         if value.nil?
-          translations.delete(locale.to_s)
+          translations.delete(locale)
         else
-          translations[locale.to_s] = value
+          translations[locale] = value
         end
         public_send("#{translation_store}=", translations)
         value

@@ -184,4 +184,10 @@ class TranslatesTest < JSONTranslate::Test
     I18n.with_locale(:fr) { assert_equal "Un livre unique", p.comment }
     I18n.with_locale(:fr) { assert_equal "Alice au pays des merveilles", p.title }
   end
+
+  def test_translation_locale_validation
+    assert_raises(JSONTranslate::InvalidTranslationLocale) { 
+      p = PostDetailed.create!(title_ru: "Alice in Wonderland") 
+    }
+  end
 end
